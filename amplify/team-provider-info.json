@@ -1,0 +1,38 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-awstutorialwithreact-dev-204933-authRole",
+      "UnauthRoleArn": "arn:aws:iam::572566708565:role/amplify-awstutorialwithreact-dev-204933-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::572566708565:role/amplify-awstutorialwithreact-dev-204933-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-awstutorialwithreact-dev-204933-deployment",
+      "UnauthRoleName": "amplify-awstutorialwithreact-dev-204933-unauthRole",
+      "StackName": "amplify-awstutorialwithreact-dev-204933",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:572566708565:stack/amplify-awstutorialwithreact-dev-204933/6b5e3cf0-df71-11ed-89ae-0afdfbca26dd",
+      "AmplifyAppId": "d17al0uclqaef"
+    },
+    "categories": {
+      "auth": {
+        "awstutorialwithreactcdb52061": {}
+      }
+    }
+  },
+  "newamplify": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-awstutorialwithreact-newamplify-221358-authRole",
+      "UnauthRoleArn": "arn:aws:iam::572566708565:role/amplify-awstutorialwithreact-newamplify-221358-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::572566708565:role/amplify-awstutorialwithreact-newamplify-221358-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-awstutorialwithreact-newamplify-221358-deployment",
+      "UnauthRoleName": "amplify-awstutorialwithreact-newamplify-221358-unauthRole",
+      "StackName": "amplify-awstutorialwithreact-newamplify-221358",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:572566708565:stack/amplify-awstutorialwithreact-newamplify-221358/3666b480-df7d-11ed-b8fa-0e620a1a0fcb",
+      "AmplifyAppId": "d17al0uclqaef"
+    },
+    "categories": {
+      "auth": {
+        "awstutorialwithreactcdb52061": {}
+      }
+    }
+  }
+}
