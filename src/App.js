@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import{ Amplify }from "aws-amplify";
 import{ withAuthenticator } from "@aws-amplify/ui-react";
@@ -11,12 +10,11 @@ function App({signOut, user }) {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h2> Hello React app with AWS</h2>
+        <h2> shirai </h2>
         {user ? (
           <>
-           <h3>私は権限を持っています:{user.username}</h3>
-           <button onClick={signOut}>サインアウト</button>
+           <h3>ユーザー画面:{user.username}</h3>
+           <button onClick={signOut}>ログアウト</button>
           </>
         ) : (
           <h3>権限がありません</h3>
