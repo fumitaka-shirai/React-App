@@ -6,53 +6,63 @@ export default function App() {
     {
       Title:"去痰薬",
       title: "ムコダインDS50%",
-      Category:"体重あたり",
-      category: "イチゴ",
+      Category:"体重あたり1回10㎎/㎏　1日3回まで",
+      category: "ピーチ",
     },
     {
       Title:"去痰薬",
-      title: "LaravelのMVCモデルについて",
-      category: "Laravel"
+      title: "ムコソルバンDS1.5%",
+      Category:"体重あたり1日0.06g/㎏　1日3回まで",
+      category: "ヨーグルト"
     },
     {
       Title:"抗生剤",
-      title: "同一オリジンポリシーとCORS",
-      category: "Web"
+      title: "セフゾン細粒小児用10%",
+      Category: "体重あたり1日9~18㎎/㎏　1日3回まで",
+      category:"ストロベリー"
     },
     {
       Title:"抗生剤",
-      title: "useEffectの使い方",
-      category: "React"
+      title: "メイアクトMS小児用細粒10%",
+      Category: "体重あたり1日3㎎/㎏　1日3回まで",
+      category:"バナナ"
     },
     {
-      Title:"鎮痛薬",
-      title: "useEffectの使い方",
-      category: "React"
+      Title:"鎮咳薬",
+      title: "メジコン配合シロップ",
+      Category: "年齢により8~14歳1日9~16ml、3か月~7歳1日3~8ml　1日3~4回まで",
+      category:"チェリー"
     },
     {
-      Title:"鎮痛薬",
-      title: "useEffectの使い方",
-      category: "React"
+      Title:"鎮咳薬",
+      title: "アスベリン散10%",
+      Category: "年齢により1歳未満5~20㎎、1歳以上3歳未満10~25㎎、3歳以上6歳未満15~40㎎　1日3回まで",
+      category:"甘い"
     },
     {
       Title:"抗アレルギー薬",
-      title: "useEffectの使い方",
-      category: "React"
+      title: "シングレア細粒4㎎",
+      Category: "年齢により1歳以上6歳未満4㎎　1日1回まで",
+      category:"なし"
     },
     {
       Title:"抗アレルギー薬",
-      title: "useEffectの使い方",
-      category: "React"
+      title: "オノンドライシロップ10%",
+      Category: "体重あたり7㎎/㎏　1日2回まで",
+      category:"ヨーグルト"
+
     },
     {
-      Title:"睡眠薬",
-      title: "useEffectの使い方",
-      category: "React"
+      Title:"鎮痛薬",
+      title: "カロナール細粒20%",
+      Category: "体重あたり10~15㎎/㎏　1日60㎎/㎏まで",
+      category:"オレンジ"
     },
     {
-      Title:"睡眠薬",
-      title: "useEffectの使い方",
-      category: "React"
+      Title:"鎮痛薬",
+      title: "ポンタール散50%",
+      Category: "体重あたり6.5㎎/㎏　1日2回まで",
+      category:"なし"
     },
   ];
   
