@@ -3,10 +3,6 @@
 		{
 			"name": "aws-tutorial-with-react",
 			"path": "."
-		},
-		{
-			"name": "src",
-			"path": "../seatch-tutorial-yt/src"
 		}
 	],
 	"settings": {}
