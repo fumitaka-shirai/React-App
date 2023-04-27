@@ -6,7 +6,7 @@ import awsExports from "./aws-exports";
 
 Amplify.configure(awsExports);
 
-function App({signOut, user }) {
+function App({signOut, user }){
   return (
     <div className="App">
       <header className="App-header">
@@ -19,9 +19,8 @@ function App({signOut, user }) {
         ) : (
           <h3>権限がありません</h3>
         )}
-      </header>
-    </div>
+      </header>    
+    </div>  
   );
 }
-
 export default withAuthenticator (App);
