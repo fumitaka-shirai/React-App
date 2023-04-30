@@ -73,7 +73,7 @@ const posts = [
 ];
  
 //const App = () => {
-  function App({ signOut,user}) { 
+function App({signOut}) { 
 
  const [showPosts, setShowPosts] = useState(posts);
  const [inputValue, setInputValue] = useState();
