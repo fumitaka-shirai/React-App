@@ -10,65 +10,65 @@ Amplify.configure(awsExports);
 
 const posts = [
   {
-    Title:"去痰薬",
-    title: "ムコダインDS50%",
-    Category:"体重あたり1回10㎎/㎏　1日3回まで",
-    category: "ピーチ",
+    Category:"去痰薬",
+    Drugs: "ムコダインDS50%",
+    Dose:"体重あたり1回10㎎/㎏　1日3回まで",
+    Taste: "ピーチ",
   },
   {
-    Title:"去痰薬",
-    title: "ムコソルバンDS1.5%",
-    Category:"体重あたり1日0.06g/㎏　1日3回まで",
-    category: "ヨーグルト"
+    Category:"去痰薬",
+    Drugs: "ムコソルバンDS1.5%",
+    Dose:"体重あたり1日0.06g/㎏　1日3回まで",
+    Taste: "ヨーグルト"
   },
   {
-    Title:"抗生剤",
-    title: "セフゾン細粒小児用10%",
-    Category: "体重あたり1日9~18㎎/㎏　1日3回まで",
-    category:"ストロベリー"
+    Category:"抗生剤",
+    Drugs: "セフゾン細粒小児用10%",
+    Dose: "体重あたり1日9~18㎎/㎏　1日3回まで",
+    Taste:"ストロベリー"
   },
   {
-    Title:"抗生剤",
-    title: "メイアクトMS小児用細粒10%",
-    Category: "体重あたり1日3㎎/㎏　1日3回まで",
-    category:"バナナ"
+    Category:"抗生剤",
+    Drugs: "メイアクトMS小児用細粒10%",
+    Dose: "体重あたり1日3㎎/㎏　1日3回まで",
+    Taste:"バナナ"
   },
   {
-    Title:"鎮咳薬",
-    title: "メジコン配合シロップ",
-    Category: "年齢により8~14歳1日9~16ml、3か月~7歳1日3~8ml　1日3~4回まで",
-    category:"チェリー"
+    Category:"鎮咳薬",
+    Drugs: "メジコン配合シロップ",
+    Dose: "年齢により8~14歳1日9~16ml、3か月~7歳1日3~8ml　1日3~4回まで",
+    Taste:"チェリー"
   },
   {
-    Title:"鎮咳薬",
-    title: "アスベリン散10%",
-    Category: "年齢により1歳未満5~20㎎、1歳以上3歳未満10~25㎎、3歳以上6歳未満15~40㎎　1日3回まで",
-    category:"甘い"
+    Category:"鎮咳薬",
+    Drugs: "アスベリン散10%",
+    Dose: "年齢により1歳未満5~20㎎、1歳以上3歳未満10~25㎎、3歳以上6歳未満15~40㎎　1日3回まで",
+    Taste:"甘い"
   },
   {
-    Title:"抗アレルギー薬",
-    title: "シングレア細粒4㎎",
-    Category: "年齢により1歳以上6歳未満4㎎　1日1回まで",
-    category:"なし"
+    Category:"抗アレルギー薬",
+    Drugs: "シングレア細粒4㎎",
+    Dose: "年齢により1歳以上6歳未満4㎎　1日1回まで",
+    Taste:"なし"
   },
   {
-    Title:"抗アレルギー薬",
-    title: "オノンドライシロップ10%",
-    Category: "体重あたり7㎎/㎏　1日2回まで",
-    category:"ヨーグルト"
+    Category:"抗アレルギー薬",
+    Drugs: "オノンドライシロップ10%",
+    Dose: "体重あたり7㎎/㎏　1日2回まで",
+    Taste:"ヨーグルト"
 
   },
   {
-    Title:"鎮痛薬",
-    title: "カロナール細粒20%",
-    Category: "体重あたり10~15㎎/㎏　1日60㎎/㎏まで",
-    category:"オレンジ"
+    Category:"鎮痛薬",
+    Drugs: "カロナール細粒20%",
+    Dose: "体重あたり10~15㎎/㎏　1日60㎎/㎏まで",
+    Taste:"オレンジ"
   },
   {
-    Title:"鎮痛薬",
-    title: "ポンタール散50%",
-    Category: "体重あたり6.5㎎/㎏　1日2回まで",
-    category:"なし"
+    Category:"鎮痛薬",
+    Drugs: "ポンタール散50%",
+    Dose: "体重あたり6.5㎎/㎏　1日2回まで",
+    Taste:"なし"
   },
 ];
  
@@ -78,14 +78,14 @@ function App({signOut}) {
  const [showPosts, setShowPosts] = useState(posts);
  const [inputValue, setInputValue] = useState();
 
- const categories = Array.from(new Set(posts.map((post) => post.Title,)));
+ const categories = Array.from(new Set(posts.map((post) => post.Category,)));
  
  // カテゴリー絞り込み
- const selectCategory = (Title) => {
-   if (Title === "all") {
+ const selectCategory = (Category) => {
+   if (Category === "all") {
      setShowPosts(posts);
    } else {
-     const selectedTitles = posts.filter((post) => post.Title === Title);
+     const selectedTitles = posts.filter((post) => post.Category === Category);
      setShowPosts(selectedTitles);
    }
  };
@@ -127,8 +127,8 @@ function App({signOut}) {
      <div>
        <h4>薬効</h4>
        <button onClick={() => selectCategory("all")}>全て</button>
-       {categories.map((Title) => (
-         <button onClick={() => selectCategory(Title)}>{Title}</button>
+       {categories.map((Category) => (
+         <button onClick={() => selectCategory(Category)}>{Category}</button>
        ))}
      </div>
 
@@ -142,11 +142,11 @@ function App({signOut}) {
      {showPosts.map((post, index) => {
        return (
          <div key={post.title}>
-           <p>薬効：{post.Title}</p>
-           <p>医薬品名：{post.title}
+           <p>薬効：{post.Category}</p>
+           <p>医薬品名：{post.Drugs}
            </p>
-           <p>味：{post.category}</p>
-           <p>投与量:{post.Category}</p>
+           <p>味：{post.Taste}</p>
+           <p>投与量:{post.Dose}</p>
          </div>
        );
      })}
