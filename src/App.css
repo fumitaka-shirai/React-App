@@ -28,6 +28,10 @@
   color: #61dafb;
 }
 
+ div { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -39,14 +43,14 @@
 .main {
   padding: 70px 150px;
 }
-h2 {
-  display: inline-block;
-  color: #fff;
-  background: #ffaf58;
-  padding: 0.5em;
-  line-height: 1.5;
-  vertical-align: middle;
-  border-radius: 30px 0px 0px 30px;
+p .box5 {
+  padding: 0.5em 1em;
+  margin: 2em 0;
+  border: double 5px #4ec4d3;
+}
+.box5 p {
+  margin: 0; 
+  padding: 0;
 }
 
 h2::before {
@@ -74,7 +78,7 @@ button{
   display: inline-block;
   color: #000000;
   background: #ffaf58;
-  padding: 1.0em;
+  padding: 0em;
   line-height: 1.0;
   vertical-align: middle;
   border-radius: 0px 0px 0px 0px;
@@ -85,16 +89,20 @@ button{
 .main {
   padding: 70px 150px;
 }
-p {
-  display: block;
-  color: #000000;
-  background: #ffbf00;
-  padding: 2em;
-  line-height: 4;
-  border-radius: 0px px 0px 0px;
-  font-size: 15px;
-  font-weight: 1000;
+p  {
+  padding: 0.5em 0em;
+  margin: 0em 0;
+  border: solid 2px #f3cc0a;
+  text-align: left;
+  font-family:"YuGothic";
+  font-size: 20px;
+  
 }
+ p {
+  margin: 0; 
+  padding: 0;
+}
+
 
 h4 {
   margin-bottom: 15px;
@@ -147,4 +155,9 @@ div{
   padding: 10px ;
   outline: none;
   vertical-align: center;
+}
+
+h5 {
+  text-align: left;
+  font-size: 15pt
 }
