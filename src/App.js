@@ -5,6 +5,10 @@ import{ Amplify }from "aws-amplify";
 import{ withAuthenticator,Button, } from "@aws-amplify/ui-react";
 import"@aws-amplify/ui-react/styles.css";
 import awsExports from "./aws-exports";
+import React from'react';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+
 
 Amplify.configure(awsExports);
 
@@ -71,16 +75,32 @@ const posts = [
     Taste:"なし"
   },
 ];
- 
+
+
 //const App = () => {
 function App({signOut}) { 
 
  const [showPosts, setShowPosts] = useState(posts);
  const [inputValue, setInputValue] = useState();
-
  const categories = Array.from(new Set(posts.map((post) => post.Category,)));
  
- // カテゴリー絞り込み
+ const animatedComponents = makeAnimated(posts);
+ 
+ const Category =[
+  {value:'1',label:'鎮咳薬'},
+  {value:'2',label:'鎮痛薬'},
+  {value:'3',label:'抗アレルギー薬'},
+ ];
+
+ const Tastes =[
+  {value:'post',label:'ピーチ'}
+ ]
+
+ const Dose =[
+  {value:'1',label:'就寝前'}
+ ]
+
+ // カテゴリー絞り込み 
  const selectCategory = (Category) => {
    if (Category === "all") {
      setShowPosts(posts);
@@ -90,7 +110,6 @@ function App({signOut}) {
    }
  };
  
-
  // フリーキーワードでの絞り込み
  const search = (value) => {
    if (value !== "") {
@@ -112,6 +131,7 @@ function App({signOut}) {
    return;
  };
 
+  
  const handleInputChange = (e) => {
    setInputValue(e.target.value);
    search(e.target.value);
@@ -120,9 +140,9 @@ function App({signOut}) {
  return (
   <>
   {
+     
    <div className="App">
      <h1>小児用薬検索</h1>
-
      {/* カテゴリー選択ボタン */}
      <div>
        <h4>薬効</h4>
@@ -132,10 +152,33 @@ function App({signOut}) {
        ))}
      </div>
 
-     {/* フリーキーワード検索フォーム */}
+     {/* フリーキーワード・絞り込み検索フォーム */}
      <div>
     <h4>フリーワード検索</h4>
        <input type="text" value={inputValue} onChange={handleInputChange} />
+    <h4>絞り込み検索</h4>  
+      <h5>分類</h5>
+      <Select
+        closeMenuOnSelect={false}
+        components={animatedComponents}
+        isMulti
+        options={Category}
+      />
+      <h5>味</h5>
+      <Select
+        closeMenuOnSelect={false}
+        components={animatedComponents}
+        isMulti
+        options={Tastes}
+        
+      />
+      <h5>用法</h5>
+      <Select
+        closeMenuOnSelect={false}
+        components={animatedComponents}
+        isMulti
+        options={Dose}
+      />
      </div>
 
      {/* 記事一覧表示 */}
@@ -158,4 +201,3 @@ function App({signOut}) {
 }
 
 export default withAuthenticator(App);
-  
