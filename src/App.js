@@ -161,7 +161,7 @@ function App({signOut}) {
       <Select
         closeMenuOnSelect={false}
         components={animatedComponents}
-        isMulti
+        onChange={v => search(v.label)}
         options={Category}
       />
       <h5>味</h5>
