@@ -51,38 +51,25 @@
 table{
   width: 100%;
   border-collapse: collapse;
-}
-
-table tr *:nth-child(1){
-  background: #49c5f0;
-  
-}
-table tr *:nth-child(2){
-  background: #57b3e8;
- 
-}
-
-table tr *:nth-child(3){
-  background: #649cdf;
-}
-
-table tr *:nth-child(4){
-  background: #6e87d7;
-  
-}
-
-table{
-  table-layout:fixed;
-  width: 100%;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  table-layout: fixed;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
+  color: black;
 }
 
+table tr{
+  background-image: linear-gradient(40deg, #57b3e8 20%,#ab50fb 74%);
+}
+
+table tr:last-child *{
+  border-bottom: none;
+}
 
 table th,table td{
-  color:white;
-  border:solid 1px white;
   text-align: center;
+  border: solid 2px #fff;
+  font-weight: bold;
+  color:white;
   padding: 10px 0;
 }
 
@@ -111,9 +98,8 @@ button {
   color: #fff;
   border: 2px solid #fff;
   border-radius: 0;
-  background-image: -webkit-gradient(linear, left top, right top, from(#fa709a), to(#fee140));
-  background-image: -webkit-linear-gradient(left,#57b3e8 0%, #fee140 100%);
-  background-image: linear-gradient(to right, #57b3e8 0%, #fee140 100%);
+  background-image: -webkit-linear-gradient(left,#57b3e8 0%, #ab50fb  100%);
+  background-image: linear-gradient(to right, #57b3e8 0%, #ab50fb  100%);
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
   box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
 }
@@ -139,19 +125,22 @@ button {
 
 
 h4 {
-  margin-bottom: 15px;
-  padding: 10px 20px;
-  outline: none;
-  border-radius: 5px;
-  width: 550px;
-  vertical-align: center;
-  position: relative; top: 20; 
-  font-weight: 1000;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold;
   font-size: 20px;
-
+  text-align: center;
 }
+h4 {
+  position: relative;
+  padding: 0.25em 0;
+}
+h4:after {
+  content: "";
+  display: block;
+  height: 4px;
+  background: -webkit-linear-gradient(to right, rgb(115, 255, 234), #57b3e8 );
+  background: linear-gradient(to right, rgba(49, 195, 227, 0.933), #ab50fb  );
+}
+
 
 .box {
   width: 300px;
@@ -177,6 +166,28 @@ h4::before{ margin-bottom: 15px;
   vertical-align: center;
   position: relative; top: 0; 
 
+}
+h1 {
+  position: relative;
+  color: #0c100d;
+  font-size: 40px;
+  padding: 10px 0;
+  text-align: center;
+  margin: 1.5em 0;
+}
+h1:before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 200px;
+  height: 90px;
+  border-radius: 70%;
+  border: 5px solid #a6ddb0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 
 button {margin-bottom: 15px;
