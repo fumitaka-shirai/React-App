@@ -88,12 +88,12 @@ function App({signOut}) {
  
  const Category =[
   {value:'鎮咳薬',label:'鎮咳薬'},
-  {value:'鎮痛薬',label:'鎮痛薬'},
+  {value:'鎮痛薬',label:'去痰薬'},
   {value:'抗アレルギー薬',label:'抗アレルギー薬'},
  ];
 
  const Tastes =[
-  {value:'1',label:'ピーチ'}
+  {value:'ピーチ',label:'ピーチ'}
  ]
 
  const Dose =[
@@ -105,8 +105,8 @@ function App({signOut}) {
    if (Category === "all") {
      setShowdrugs(drugs);
    } else {
-     const selectedTitles = drugs.filter((drugs) => drugs.Category === Category);
-     setShowdrugs(selectedTitles);
+     const selectedcategory = drugs.filter((drugs) => drugs.Category === Category);
+     setShowdrugs(selectedcategory);
    }
  };
  
@@ -159,14 +159,15 @@ function App({signOut}) {
     <h4>絞り込み検索</h4>  
       <h5>分類</h5>
       <Select 
-        closeMenuOnSelect={false}
+        closeMenuOnSelect={true}
         components={animatedComponents}
-        onChange={v=>search(v.label)} 
+        onChange={v=>search(v.label)}
         options={Category}
+                
       />
       <h5>味</h5>
       <Select
-        closeMenuOnSelect={false}
+        closeMenuOnSelect={true}
         components={animatedComponents}
         onChange={v=>search(v.label)} 
         options={Tastes}
@@ -176,6 +177,7 @@ function App({signOut}) {
       <Select
         closeMenuOnSelect={false}
         components={animatedComponents}
+        onChange={v=>search(v.label)} 
         options={Dose}
       />
      </div>
@@ -184,11 +186,20 @@ function App({signOut}) {
      {showdrugs.map((drugs, index) => {
        return (
          <div key={drugs.title}>
-           <p>薬効：{drugs.Category}</p>
-           <p>医薬品名：{drugs.Drugs}
-           </p>
-           <p>味：{drugs.Taste}</p>
-           <p>投与量:{drugs.Dose}</p>
+          <table>
+          <tr>
+          <th>分類</th>
+          <th>医薬品名</th>
+          <th>味</th>
+          <th>用法</th>
+          </tr>  
+          <tr>
+           <td>{drugs.Category}</td>
+           <td>{drugs.Name}    </td>
+           <td>{drugs.Taste}   </td>
+           <td>{drugs.Dose}    </td>
+           </tr>
+           </table>
          </div>
        );
      })}
