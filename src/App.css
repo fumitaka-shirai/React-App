@@ -28,9 +28,14 @@
   color: #61dafb;
 }
 
+
+
+
  div { 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
 }
+
 
 @keyframes App-logo-spin {
   from {
@@ -43,14 +48,42 @@
 .main {
   padding: 70px 150px;
 }
-p .box5 {
-  padding: 0.5em 1em;
-  margin: 2em 0;
-  border: double 5px #4ec4d3;
+table{
+  width: 100%;
+  border-collapse: collapse;
 }
-.box5 p {
-  margin: 0; 
-  padding: 0;
+
+table tr *:nth-child(1){
+  background: #49c5f0;
+  
+}
+table tr *:nth-child(2){
+  background: #57b3e8;
+ 
+}
+
+table tr *:nth-child(3){
+  background: #649cdf;
+}
+
+table tr *:nth-child(4){
+  background: #6e87d7;
+  
+}
+
+table{
+  table-layout:fixed;
+  width: 100%;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+}
+
+
+table th,table td{
+  color:white;
+  border:solid 1px white;
+  text-align: center;
+  padding: 10px 0;
 }
 
 h2::before {
@@ -74,14 +107,23 @@ input {
   position: relative; top: 0; 
 }
 
-button{
-  display: inline-block;
-  color: #000000;
-  background: #ffaf58;
-  padding: 0em;
-  line-height: 1.0;
-  vertical-align: middle;
-  border-radius: 0px 0px 0px 0px;
+button {
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 0;
+  background-image: -webkit-gradient(linear, left top, right top, from(#fa709a), to(#fee140));
+  background-image: -webkit-linear-gradient(left,#57b3e8 0%, #fee140 100%);
+  background-image: linear-gradient(to right, #57b3e8 0%, #fee140 100%);
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+}
+
+ button{
+  -webkit-transform: translate(0, -2px);
+  transform: translate(0, -2px);
+  color: #fff;
+  -webkit-box-shadow: 0 8px 15px rgba(0, 0, 0, .2);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, .2);
 }
 .App {
   text-align: center;
@@ -89,15 +131,7 @@ button{
 .main {
   padding: 70px 150px;
 }
-p  {
-  padding: 0.5em 0em;
-  margin: 0em 0;
-  border: solid 2px #f3cc0a;
-  text-align: left;
-  font-family:"YuGothic";
-  font-size: 20px;
-  
-}
+
  p {
   margin: 0; 
   padding: 0;
@@ -113,6 +147,9 @@ h4 {
   vertical-align: center;
   position: relative; top: 20; 
   font-weight: 1000;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: 20px;
 
 }
 
