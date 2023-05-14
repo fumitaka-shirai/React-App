@@ -87,7 +87,7 @@ function App({signOut}) {
  const animatedComponents = makeAnimated(drugs);
  
  const Category =[
-  {value:'鎮咳薬',label:'鎮咳薬'},
+  {value:'1',label:'鎮咳薬'},
   {value:'鎮痛薬',label:'去痰薬'},
   {value:'抗アレルギー薬',label:'抗アレルギー薬'},
  ];
@@ -119,7 +119,7 @@ function App({signOut}) {
            (item) =>
              item !== undefined &&
              item !== null &&
-             item.toUpperCase().indexOf(value.toUpperCase()) !== -1
+             item.toUpperCase().indexOf(value.toUpperCase())!== -1
              
          ).length > 0
      );
@@ -134,7 +134,7 @@ function App({signOut}) {
   
  const handleInputChange = (e) => {
    setInputValue(e.target.value);
-   search(e.target.value);
+   search(e.target.value)
  };
 
  return (
@@ -161,6 +161,7 @@ function App({signOut}) {
       <Select 
         closeMenuOnSelect={true}
         components={animatedComponents}
+        style={{backroundColor:'lightblue'}}
         onChange={v=>search(v.label)}
         options={Category}
                 
@@ -175,7 +176,7 @@ function App({signOut}) {
       />
       <h5>用法</h5>
       <Select
-        closeMenuOnSelect={false}
+        closeMenuOnSelect={true}
         components={animatedComponents}
         onChange={v=>search(v.label)} 
         options={Dose}
@@ -183,7 +184,7 @@ function App({signOut}) {
      </div>
 
      {/* 記事一覧表示 */}
-     {showdrugs.map((drugs, index) => {
+     {showdrugs.map((drugs) => {
        return (
          <div key={drugs.title}>
           <table>
