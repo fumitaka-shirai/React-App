@@ -152,7 +152,7 @@ return (
   <div className="App">
     <h1>小児用薬検索</h1>
 
-    {/* Category selection */}
+    //カテゴリー選択//
     <div>
       <h4>薬効</h4>
       <button onClick={() => selectCategory(null)}>全て</button>
@@ -174,7 +174,13 @@ return (
         closeMenuOnSelect={true}
         components={animatedComponents}
         onChange={selectCategory}
-        options={categories.map(category => ({ value: category, label: category }))}
+        options={[
+          { value:'去痰薬' , label: '去痰薬' },
+          { value: '抗生剤', label: '抗生剤' },
+          { value: '鎮痛薬', label: '鎮痛薬' },
+          { value: '抗アレルギー薬', label: '抗アレルギー薬' },
+          { value: '鎮咳薬', label: '鎮咳薬' },
+        ]}
         isClearable
       />
 
@@ -186,7 +192,10 @@ return (
         options={[
           { value: 'ピーチ', label: 'ピーチ' },
           { value: 'ヨーグルト', label: 'ヨーグルト' },
-          // ... other taste options
+          { value: 'ストロベリー', label: 'ストロベリー' },
+          { value: 'チェリー', label: 'チェリー' },
+          { value: 'オレンジ', label: 'オレンジ' },
+          { value: 'なし', label: 'なし' },
         ]}
         isClearable
       />
@@ -197,15 +206,16 @@ return (
         components={animatedComponents}
         onChange={selectDose}
         options={[
-          { value: '体重あたり1回10㎎/㎏　1日3回まで', label: '体重あたり1回10㎎/㎏　1日3回まで' },
-          { value: '体重あたり1日0.06g/㎏　1日3回まで', label: '体重あたり1日0.06g/㎏　1日3回まで' },
-          // ... other dose options
+          { value: '食後', label: '食後' },
+          { value: '食前', label: '食前' },
+          { value: '寝る前', label: '寝る前' },
+          { value: 'なし', label: 'なし' }
         ]}
         isClearable
       />
     </div>
 
-    {/* Drug list */}
+    //表//
     <table>
       <thead>
         <tr>
