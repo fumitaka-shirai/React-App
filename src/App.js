@@ -2,14 +2,12 @@ import { useState } from "react";
 import "./App.css";
 
 import{ Amplify }from "aws-amplify";
-import{ withAuthenticator,Button, } from "@aws-amplify/ui-react";
+import{ withAuthenticator } from "@aws-amplify/ui-react";
 import"@aws-amplify/ui-react/styles.css";
 import awsExports from "./aws-exports";
 import React from'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-
-
 
 
 Amplify.configure(awsExports);
@@ -90,6 +88,7 @@ function App({signOut}) {
   const [selectedDose, setSelectedDose] = useState(null);
  const animatedComponents = makeAnimated(drugs);
  
+
  const selectCategory = category => {
   setSelectedCategory(category);
   filterDrugs(category, selectedTaste, selectedDose);
@@ -151,22 +150,19 @@ const handleInputChange = e => {
 return (
   <div className="App">
     <h1>小児用薬検索</h1>
-
-    //カテゴリー選択//
     <div>
       <h4>薬効</h4>
       <button onClick={() => selectCategory(null)}>全て</button>
       {categories.map(category => (
-        <button key={category} onClick={() => selectCategory({ label: category })}>
+        <button onClick={() => selectCategory({ label: category })}>
           {category}
         </button>
       ))}
     </div>
 
-    {/* Free text and filtering search */}
     <div>
       <h4>フリーワード検索</h4>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
+      <input type="string" value={inputValue} onChange={handleInputChange} />
 
       <h4>絞り込み検索</h4>
       <h5>分類</h5>
@@ -215,7 +211,7 @@ return (
       />
     </div>
 
-    //表//
+  
     <table>
       <thead>
         <tr>
