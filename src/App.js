@@ -81,7 +81,7 @@ const drugs = [
 function App({signOut}) { 
 
  const [showdrugs, setShowdrugs] = useState(drugs);
- const [inputValue, setInputValue] = useState();
+ const [inputLabel, setInputLabel] = useState();
  const categories = Array.from(new Set(drugs.map((drugs) => drugs.Category,)));
  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTaste, setSelectedTaste] = useState(null);
@@ -122,10 +122,10 @@ const filterDrugs = (category, taste, dose) => {
   setShowdrugs(filteredDrugs);
 };
 
-const search = value => {
-  setInputValue(value);
+const search = label => {
+  setInputLabel(label);
 
-  if (value !== '') {
+  if (label !== '') {
     const searchedDrugs = drugs.filter(
       drug =>
         Object.values(drug).some(
@@ -133,7 +133,7 @@ const search = value => {
             item !== undefined &&
             item !== null &&
             typeof item === 'string' &&
-            item.toUpperCase().indexOf(value.toUpperCase()) !== -1
+            item.toUpperCase().indexOf(label.toUpperCase()) !== -1
         )
     );
     setShowdrugs(searchedDrugs);
@@ -143,8 +143,8 @@ const search = value => {
 };
 
 const handleInputChange = e => {
-  setInputValue(e.target.value);
-  search(e.target.value);
+  setInputLabel(e.target.label);
+  search(e.target.label);
 };
 
 return (
@@ -162,7 +162,7 @@ return (
 
     <div>
       <h4>フリーワード検索</h4>
-      <input type="string" value={inputValue} onChange={handleInputChange} />
+      <input type="string" label={inputLabel} onChange={handleInputChange} />
 
       <h4>絞り込み検索</h4>
       <h5>分類</h5>
@@ -171,11 +171,11 @@ return (
         components={animatedComponents}
         onChange={selectCategory}
         options={[
-          { value:'去痰薬' , label: '去痰薬' },
-          { value: '抗生剤', label: '抗生剤' },
-          { value: '鎮痛薬', label: '鎮痛薬' },
-          { value: '抗アレルギー薬', label: '抗アレルギー薬' },
-          { value: '鎮咳薬', label: '鎮咳薬' },
+          {  label: '去痰薬' },
+          {  label: '抗生剤' },
+          {  label: '鎮痛薬' },
+          {  label: '抗アレルギー薬' },
+          {  label: '鎮咳薬' },
         ]}
         isClearable
       />
@@ -186,12 +186,12 @@ return (
         components={animatedComponents}
         onChange={selectTaste}
         options={[
-          { value: 'ピーチ', label: 'ピーチ' },
-          { value: 'ヨーグルト', label: 'ヨーグルト' },
-          { value: 'ストロベリー', label: 'ストロベリー' },
-          { value: 'チェリー', label: 'チェリー' },
-          { value: 'オレンジ', label: 'オレンジ' },
-          { value: 'なし', label: 'なし' },
+          { label: 'ピーチ' },
+          {  label: 'ヨーグルト' },
+          {  label: 'ストロベリー' },
+          {  label: 'チェリー' },
+          {  label: 'オレンジ' },
+          {  label: 'なし' },
         ]}
         isClearable
       />
@@ -202,10 +202,10 @@ return (
         components={animatedComponents}
         onChange={selectDose}
         options={[
-          { value: '食後', label: '食後' },
-          { value: '食前', label: '食前' },
-          { value: '寝る前', label: '寝る前' },
-          { value: 'なし', label: 'なし' }
+          {  label: '食後' },
+          {  label: '食前' },
+          {  label: '寝る前' },
+          {  label: 'なし' }
         ]}
         isClearable
       />
