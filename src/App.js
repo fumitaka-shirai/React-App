@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import "./App.css";
 
 import{ Amplify }from "aws-amplify";
@@ -8,6 +8,8 @@ import awsExports from "./aws-exports";
 import React from'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import axios from 'axios';
+
 
 
 Amplify.configure(awsExports);
@@ -87,7 +89,7 @@ function App({signOut}) {
   const [selectedTaste, setSelectedTaste] = useState(null);
   const [selectedDose, setSelectedDose] = useState(null);
  const animatedComponents = makeAnimated(drugs);
- 
+const [drug,setDrug] = useState([]);
 
  const selectCategory = category => {
   setSelectedCategory(category);
@@ -105,7 +107,7 @@ const selectDose = dose => {
 };
 
 const filterDrugs = (category, taste, dose) => {
-  let filteredDrugs = drugs;
+  let filteredDrugs = showdrugs;
 
   if (category) {
     filteredDrugs = filteredDrugs.filter(drug => drug.Category === category.label);
@@ -138,19 +140,38 @@ const search = label => {
     );
     setShowdrugs(searchedDrugs);
   } else {
-    filterDrugs(selectedCategory, selectedTaste, selectedDose);
+    fetchData();
   }
 };
 
 const handleInputChange = e => {
-  setInputLabel(e.target.label);
-  search(e.target.label);
+  setInputLabel(e.target.value);
+  search(e.target.value);
 };
+
+useEffect(() => {
+  fetchData();
+}, []);
+
+const fetchData = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:5000/drug"); // Replace "/api/data" with your actual API endpoint
+    setDrug(response.data); // Assuming the response has a "message" field containing the drugs data
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+if (drugs.length === 0) {
+  return <div>Loading...</div>;
+}
 
 return (
   <div className="App">
     <h1>小児用薬検索</h1>
     <div>
+       {/* Rest of the JSX code */}
       <h4>薬効</h4>
       <button onClick={() => selectCategory(null)}>全て</button>
       {categories.map(category => (
@@ -211,7 +232,18 @@ return (
       />
     </div>
 
-  
+    <ul>
+      {drugs.map((drug) => (
+        <li key={drug.Name}>
+          <p>カテゴリー: {drug.Category}</p>
+          <p>医薬品名: {drug.Name}</p>
+          <p>用法: {drug.Dose}</p>
+          <p>味: {drug.Taste}</p>
+        </li>
+      ))}
+    </ul>
+
+
     <table>
       <thead>
         <tr>
@@ -237,5 +269,5 @@ return (
     </div>
 
  );
-};
+        };
 export default withAuthenticator(App);
