@@ -12,7 +12,6 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
 .App-header {
   background-color: #f9f9f9;
   min-height: 100vh;
@@ -26,6 +25,21 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.message {
+  background-color: #bbe4dd; /* 塗りつぶし色 */
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.reply {
+  background-color: #f8f4d0;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+  margin-left: 20px;
 }
 
 
@@ -48,11 +62,12 @@
 .main {
   padding: 70px 150px;
 }
+
 table{
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
   color: black;
 }
@@ -167,6 +182,7 @@ h4::before{ margin-bottom: 15px;
   position: relative; top: 0; 
 
 }
+@import url(https://fonts.googleapis.com/css?family=Anton);
 h1 {
   position: relative;
   color: #0c100d;
@@ -174,6 +190,7 @@ h1 {
   padding: 10px 0;
   text-align: center;
   margin: 1.5em 0;
+  font-family: 'Anton';
 }
 h1:before {
   content: "";
