@@ -11,10 +11,11 @@ const App = ({ signOut }) => {
   const [selectedDose, setSelectedDose] = useState(null);
   const animatedComponents = makeAnimated();
   const [messages, setMessages] = useState([]);
-  const [username, setUsername] = useState('');
-  const [messageTitle, setMessageTitle] = useState('');
-  const [chatMessage, setChatMessage] = useState('');
   const [chatData, setChatData] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(100); // 1ページに表示する医薬品数
+  const [filteredDrugs, setFilteredDrugs] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,271 +33,252 @@ const App = ({ signOut }) => {
 
   const categories = Array.from(new Set(drugs.map((drug) => drug.Category)));
 
-  const selectCategory = (category) => {
-    setSelectedCategory(category);
-    filterDrugs(category, selectedDose);
+  const handleSelectCategory = (selectedOption) => {
+    setSelectedCategory(selectedOption);
+    filterDrugs(selectedOption ? selectedOption.value : null);
   };
 
-  const selectDose = (dose) => {
-    setSelectedDose(dose);
-    filterDrugs(selectedCategory, dose);
+  const handleSearch = () => {
+    search(searchValue);
   };
 
-  const filterDrugs = (category, dose) => {
+  const search = (value) => {
+    setSearchValue(value); // 検索値をセットする
+    filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, value);
+  };
+
+  const filterDrugs = (category, dose,label) => {
     let filteredDrugs = drugs;
 
     if (category) {
-      filteredDrugs = filteredDrugs.filter((drug) => drug.Category === category.label);
+      filteredDrugs = filteredDrugs.filter((drug) => drug.Category === category);
     }
 
     if (dose) {
       filteredDrugs = filteredDrugs.filter((drug) => drug.Dose === dose.label);
     }
 
-    setDrugs(filteredDrugs);
-  };
-
-  const search = (label) => {
-    setInputLabel(label);
-
-    if (label !== '') {
-      const searchedDrugs = drugs.filter(
-        (drug) =>
-          Object.values(drug).some(
-            (item) =>
-              item !== undefined &&
-              item !== null &&
-              typeof item === 'string' &&
-              item.toUpperCase().includes(label.toUpperCase())
-          )
+    if (label) {
+      filteredDrugs = filteredDrugs.filter((drug) =>
+        Object.values(drug).some(
+          (item) =>
+            item !== undefined &&
+            item !== null &&
+            typeof item === 'string' &&
+            item.toUpperCase().includes(label.toUpperCase())
+        )
       );
-      setDrugs(searchedDrugs);
-    } else {
-      filterDrugs(selectedCategory, selectedDose);
     }
-  };
+    setFilteredDrugs(filteredDrugs);
+};
 
   const handleInputChange = (e) => {
-    setInputLabel(e.target.value);
-    search(e.target.value);
+    const value = e.target.value;
+    setSearchValue(value);
+  };
+  
+  const categoryOptions = [
+    { value: null, label: 'すべて' },
+    ...categories.map((category) => ({ value: category, label: category })),
+  ];
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      width: 600,
+      margin: '0 auto',
+    }),
   };
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const handleMessageTitleChange = (e) => {
-    setMessageTitle(e.target.value);
-  };
-
-  const handleChatMessageChange = (e) => {
-    setChatMessage(e.target.value);
-  };
-
-  const sendChatMessage = async (message, drugName) => {
-    try {
-      await axios.post('http://localhost:5000/api/chat');
-      console.log('メッセージが送信されました。');
-      setChatData((prevChatData) => {
-        const updatedChatData = { ...prevChatData };
-        updatedChatData[drugName] = [...(updatedChatData[drugName] || []), message];
-        return updatedChatData;
-      });
-    } catch (error) {
-      console.error('メッセージの送信中にエラーが発生しました。', error);
-    }
-  };
-
-  const handleSendMessage = (drugName) => {
-    if (chatMessage && messageTitle && username) {
+  const handleSendMessage = async (drugName) => {
+    const chatMessage = chatData[drugName]?.message || '';
+    const username = chatData[drugName]?.username || '';
+  
+    if (chatMessage && username) {
       const newMessage = {
-        id: Date.now().toString(),
-        title: messageTitle,
         text: chatMessage,
         date: new Date().toLocaleString(),
         username: username,
-        replies: [],
       };
-
-      sendChatMessage(newMessage, drugName);
-      setChatMessage('');
-      setMessageTitle('');
-      setUsername('');
-    }
-  };
-
-  const handleReply = (drugName, messageId) => {
-    const reply = window.prompt("返信メッセージを入力してください");
-    if (reply) {
-      const replyUsername = window.prompt("ユーザーネームを入力してください");
-      if (replyUsername) {
-        const now = new Date();
-        const formattedDate = now.toLocaleString();
-        const updatedDrugs = drugs.map((drug) => {
-          if (drug.Name === drugName) {
-            const updatedChat = (drug.chat || []).map((message) => {
-              if (message.id === messageId) {
-                return {
-                  ...message,
-                  replies: [
-                    ...(message.replies || []),
-                    { text: reply, username: replyUsername, date: formattedDate },
-                  ],
-                };
-              }
-              return message;
-            });
-            return { ...drug, chat: updatedChat };
-          }
-          return drug;
+  
+      try {
+        await axios.post('http://127.0.0.1:5000/api/chat', newMessage);
+        console.log('メッセージが送信されました。');
+        setChatData((prevChatData) => {
+          const updatedChatData = { ...prevChatData };
+          updatedChatData[drugName] = {
+            message: '',
+            username: '',
+            messages: [
+              ...(updatedChatData[drugName]?.messages || []),
+              newMessage,
+            ],
+          };
+          return updatedChatData;
         });
-
-        setDrugs(updatedDrugs);
+      } catch (error) {
+        console.error('メッセージの送信中にエラーが発生しました。', error);
       }
     }
   };
+  
+
+  const handleChatMessageChange = (e, drugName) => {
+    const value = e.target.value;
+    setChatData((prevChatData) => ({
+      ...prevChatData,
+      [drugName]: {
+        ...prevChatData[drugName],
+        message: value,
+      },
+    }));
+  };
+
+  const handleUsernameChange = (e, drugName) => {
+    const value = e.target.value;
+    setChatData((prevChatData) => ({
+      ...prevChatData,
+      [drugName]: {
+        ...prevChatData[drugName],
+        username: value,
+      },
+    }));
+  };
+
+  const paginate = (array, currentPage, itemsPerPage) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return array.slice(startIndex, endIndex);
+  };
+
+  const paginatedFilteredDrugs = paginate(filteredDrugs, currentPage, itemsPerPage);
+
+  const Pagination = ({ totalItems, itemsPerPage, currentPage, setCurrentPage }) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const handleClick = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+
+    return (
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            className={pageNumber === currentPage ? 'active' : ''}
+            onClick={() => handleClick(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchChatData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/chat');
+        const response = await axios.get('http://127.0.0.1:5000/api/chat');
         const jsonData = response.data;
-        setMessages(jsonData);
+        setChatData(jsonData);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchData();
+    fetchChatData();
   }, []);
+
+  useEffect(() => {
+    filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, inputLabel);
+  }, [selectedCategory, selectedDose, inputLabel]);
 
   return (
     <div className="App">
       <h1>薬品検索</h1>
       <div>
         <h4>薬効</h4>
-        <button key="all" onClick={() => selectCategory(null)}>全て</button>
-        {categories.map((category, index) => (
-          <button key={index} onClick={() => selectCategory({ label: category })}>
-            {category}
-          </button>
-        ))}
+        <Select
+          options={categoryOptions}
+          value={selectedCategory}
+          onChange={handleSelectCategory}
+          placeholder="薬効を選択"
+          styles={customStyles}
+          isClearable
+        />
       </div>
 
       <div>
-        <h4>フリーワード検索</h4>
-        <input type="text" value={inputLabel} onChange={handleInputChange} />
-
-        <h4>絞り込み検索</h4>
-        <h5>分類</h5>
-        <Select
-          closeMenuOnSelect={true}
-          components={animatedComponents}
-          onChange={selectCategory}
-          options={[
-            { label: '去痰薬' },
-            { label: '抗生剤' },
-            { label: '鎮痛薬' },
-            { label: '抗アレルギー薬' },
-            { label: '鎮咳薬' },
-          ]}
-          isClearable
-        />
-
-        <h5>用法</h5>
-        <Select
-          closeMenuOnSelect={true}
-          components={animatedComponents}
-          onChange={selectDose}
-          options={[
-            { label: '食後' },
-            { label: '食前' },
-            { label: '寝る前' },
-            { label: 'なし' },
-          ]}
-          isClearable
-        />
+      <h4>フリーワード検索</h4>
+      <input
+      type="text"
+      value={searchValue}
+      onChange={handleInputChange}
+      placeholder="フリーワード検索"
+      />
+      <button onClick={handleSearch}>検索</button>
       </div>
-
+      <h4>医薬品一覧</h4>
       <table>
-        <thead>
-          <tr>
-            <th>分類</th>
-            <th>医薬品名</th>
-            <th>用法</th>
-            <th>チャット</th>
-          </tr>
-        </thead>
-        <tbody>
-          {drugs.map((drug, index) => (
-            <tr key={index}>
-              <td>{drug.Category}</td>
-              <td>{drug.Name}</td>
-              <td>{drug.Dose}</td>
-              <td>
-                {chatData[drug.Name] && chatData[drug.Name].length > 0 ? (
-                  <div>
-                    {chatData[drug.Name].map((message, i) => (
-                      <div key={i} className="message">
-                        <h3>【{message.title}】</h3>
-                        {message.text.split("\n").map((paragraph, j) => (
-                          <p key={j}>{paragraph}</p>
-                        ))}
-                        (投稿日: {message.date} - {message.username})
-                        <ul>
-                          {message.replies.map((reply, k) => (
-                            <li key={k} className="reply">
-                              返信: {reply.text} (投稿日: {reply.date} - {reply.username})
-                            </li>
-                          ))}
-                        </ul>
-                        
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>投稿はありません。</p>
-                )}
-                <input
-                  type="text"
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  placeholder="メッセージ"
-                />
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="ユーザーネーム"
-                />
-                <input
-                  type="text"
-                  value={messageTitle}
-                  onChange={(e) => setMessageTitle(e.target.value)}
-                  placeholder="タイトル"
-                />
-                <button onClick={() => handleSendMessage(drug.Name)}>投稿</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <button onClick={signOut}>Sign out</button>
-      <div>
-        <ul>
-          {messages.map((message) => (
-            <li key={message.id} className="message">
-              <h3>【{message.title}】</h3>
-              {message.text.split('\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+  <thead>
+    <tr>
+      <th>分類</th>
+      <th>医薬品名</th>
+      <th>用法</th>
+      <th>チャット</th>
+    </tr>
+  </thead>
+  <tbody>
+    {paginatedFilteredDrugs.map((drug, index) => (
+      <tr key={index}>
+        <td>{drug.Category}</td>
+        <td>{drug.Name}</td>
+        <td>{drug.Dose}</td>
+        <td>
+          {chatData[drug.Name]?.messages && chatData[drug.Name]?.messages.length > 0 ? (
+            <div>
+              {chatData[drug.Name].messages.map((message, i) => (
+                <div key={i} className="message">
+                  <p>{message.text}</p>
+                  <p>(投稿日: {message.date} - {message.username})</p>
+                  {message.replies && message.replies.map((reply, k) => (
+                    <p key={k} className="reply">
+                      返信: {reply.text} (投稿日: {reply.date} - {reply.username})
+                    </p>
+                  ))}
+                </div>
               ))}
-              (投稿日: {message.date} - {message.username})
+            </div>
+          ) : (
+            <p>投稿はありません。</p>
+          )}
+          <input
+            type="text"
+            value={chatData[drug.Name]?.message || ''}
+            onChange={(e) => handleChatMessageChange(e, drug.Name)}
+            placeholder="メッセージ"
+          />
+          <input
+            type="text"
+            value={chatData[drug.Name]?.username || ''}
+            onChange={(e) => handleUsernameChange(e, drug.Name)}
+            placeholder="ユーザーネーム"
+          />
+          <button onClick={() => handleSendMessage(drug.Name)}>投稿</button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+<Pagination
+  totalItems={filteredDrugs.length}
+  itemsPerPage={itemsPerPage}
+  currentPage={currentPage}
+  setCurrentPage={setCurrentPage}
+/>
+<button onClick={signOut}>Sign out</button>
 
-            </li>
-          ))}
-        </ul>
-      </div>
+      
     </div>
   );
 };
