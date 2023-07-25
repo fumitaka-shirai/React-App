@@ -1,21 +1,33 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import{ Amplify }from "aws-amplify";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import axios from 'axios';
+import"@aws-amplify/ui-react/styles.css";
+import awsExports from "./aws-exports";
+import{ withAuthenticator } from "@aws-amplify/ui-react";
+import { Link } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import DrugDetail from "./DrugDetail.js";
 
-const App = ({ signOut }) => {
+
+Amplify.configure(awsExports);
+
+const App = ({ signOut,user }) => {
   const [drugs, setDrugs] = useState([]);
   const [inputLabel, setInputLabel] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDose, setSelectedDose] = useState(null);
   const animatedComponents = makeAnimated();
-  const [messages, setMessages] = useState([]);
   const [chatData, setChatData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(100); // 1ページに表示する医薬品数
   const [filteredDrugs, setFilteredDrugs] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  const [searchInputValue, setSearchInputValue] = useState('');
+  
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,17 +52,23 @@ const App = ({ signOut }) => {
 
   const handleSearch = () => {
     search(searchValue);
+    console.log(typeof searchValue);
   };
 
+  const handleCancelSearch = () => {
+    setSearchInputValue('');
+  };
+  
   const search = (value) => {
-    setSearchValue(value); // 検索値をセットする
-    filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, value);
+    setSearchValue(value);
+    const categoryValue = selectedCategory ? selectedCategory.value : null;
+    filterDrugs(categoryValue, selectedDose, value);
   };
 
-  const filterDrugs = (category, dose,label) => {
+  const filterDrugs = (category, dose, label) => {
     let filteredDrugs = drugs;
-
-    if (category) {
+  
+    if (category && !label) {
       filteredDrugs = filteredDrugs.filter((drug) => drug.Category === category);
     }
 
@@ -58,25 +76,37 @@ const App = ({ signOut }) => {
       filteredDrugs = filteredDrugs.filter((drug) => drug.Dose === dose.label);
     }
 
-    if (label) {
+    if (label && typeof label === 'string') {
+      const searchLabel = label.toLowerCase();
+
       filteredDrugs = filteredDrugs.filter((drug) =>
-        Object.values(drug).some(
-          (item) =>
-            item !== undefined &&
-            item !== null &&
-            typeof item === 'string' &&
-            item.toUpperCase().includes(label.toUpperCase())
-        )
+        Object.values(drug).some((item) => {
+          if (item !== undefined && item !== null && typeof item === 'string') {
+            // Convert the item to lowercase for case-insensitive search
+            const itemText = item.toLowerCase();
+
+            // Check if the search label is included in the item text
+            return itemText.includes(searchLabel);
+          }
+          return false;
+        })
       );
     }
     setFilteredDrugs(filteredDrugs);
-};
-
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearchValue(value);
   };
   
+  
+  const handleInputChange = (inputValue) => {
+    // 文字入力による検索を実行
+    setSearchValue(inputValue);
+    filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, inputValue);
+  };
+  
+  
+  const handleSearchInputChange = (e) => {
+    setSearchInputValue(e.target.value);
+  };
+
   const categoryOptions = [
     { value: null, label: 'すべて' },
     ...categories.map((category) => ({ value: category, label: category })),
@@ -92,13 +122,19 @@ const App = ({ signOut }) => {
 
   const handleSendMessage = async (drugName) => {
     const chatMessage = chatData[drugName]?.message || '';
-    const username = chatData[drugName]?.username || '';
+    const selectedDrug = drugs.find((drug) => drug.Name === drugName);
   
-    if (chatMessage && username) {
+    if (chatMessage && selectedDrug) {
+      if (!user) {
+        // ユーザーがサインインしていない場合はエラーを表示
+        alert('レビューを投稿するにはサインインが必要です。');
+        return;
+      }
       const newMessage = {
         text: chatMessage,
         date: new Date().toLocaleString(),
-        username: username,
+        username: user.username,
+        drug_id: selectedDrug.id, // 選択した医薬品のidを取得する
       };
   
       try {
@@ -109,10 +145,7 @@ const App = ({ signOut }) => {
           updatedChatData[drugName] = {
             message: '',
             username: '',
-            messages: [
-              ...(updatedChatData[drugName]?.messages || []),
-              newMessage,
-            ],
+            messages: [...(updatedChatData[drugName]?.messages || []), newMessage],
           };
           return updatedChatData;
         });
@@ -130,17 +163,6 @@ const App = ({ signOut }) => {
       [drugName]: {
         ...prevChatData[drugName],
         message: value,
-      },
-    }));
-  };
-
-  const handleUsernameChange = (e, drugName) => {
-    const value = e.target.value;
-    setChatData((prevChatData) => ({
-      ...prevChatData,
-      [drugName]: {
-        ...prevChatData[drugName],
-        username: value,
       },
     }));
   };
@@ -180,21 +202,35 @@ const App = ({ signOut }) => {
       try {
         const response = await axios.get('http://127.0.0.1:5000/api/chat');
         const jsonData = response.data;
-        setChatData(jsonData);
+        const drugChatData = {};
+  
+        // 特定の医薬品に関連するチャットだけをフィルタリングする
+        drugs.forEach((drug) => {
+          drugChatData[drug.Name] = {
+            message: '',
+            username: '',
+            messages: jsonData.filter((message) => message.drug_id === drug.id),
+          };
+        });
+  
+        setChatData(drugChatData);
       } catch (error) {
         console.error(error);
       }
     };
-
+  
     fetchChatData();
-  }, []);
+  }, [drugs]);
+  
+    
 
   useEffect(() => {
     filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, inputLabel);
   }, [selectedCategory, selectedDose, inputLabel]);
 
   return (
-    <div className="App">
+   <div className="App">
+    <BrowserRouter>
       <h1>薬品検索</h1>
       <div>
         <h4>薬効</h4>
@@ -202,85 +238,87 @@ const App = ({ signOut }) => {
           options={categoryOptions}
           value={selectedCategory}
           onChange={handleSelectCategory}
-          placeholder="薬効を選択"
+          placeholder="薬効を選択又は入力"
           styles={customStyles}
           isClearable
         />
       </div>
 
       <div>
-      <h4>フリーワード検索</h4>
-      <input
-      type="text"
-      value={searchValue}
-      onChange={handleInputChange}
-      placeholder="フリーワード検索"
-      />
-      <button onClick={handleSearch}>検索</button>
+        <h4>フリーワード検索</h4>
+        <input
+          type="text"
+          value={searchInputValue}
+          onChange={handleSearchInputChange}
+          placeholder="フリーワード検索"
+        />
+        {searchInputValue && ( 
+            <button onClick={handleCancelSearch} style={{ marginLeft: '5px' }}>
+              キャンセル
+            </button>
+          )}
+         <button onClick={() => handleInputChange(searchInputValue)}>検索</button>
       </div>
       <h4>医薬品一覧</h4>
       <table>
-  <thead>
-    <tr>
-      <th>分類</th>
-      <th>医薬品名</th>
-      <th>用法</th>
-      <th>チャット</th>
-    </tr>
-  </thead>
-  <tbody>
-    {paginatedFilteredDrugs.map((drug, index) => (
-      <tr key={index}>
-        <td>{drug.Category}</td>
-        <td>{drug.Name}</td>
-        <td>{drug.Dose}</td>
-        <td>
-          {chatData[drug.Name]?.messages && chatData[drug.Name]?.messages.length > 0 ? (
-            <div>
-              {chatData[drug.Name].messages.map((message, i) => (
-                <div key={i} className="message">
-                  <p>{message.text}</p>
-                  <p>(投稿日: {message.date} - {message.username})</p>
-                  {message.replies && message.replies.map((reply, k) => (
-                    <p key={k} className="reply">
-                      返信: {reply.text} (投稿日: {reply.date} - {reply.username})
-                    </p>
-                  ))}
+        <thead>
+          <tr>
+            <th>分類</th>
+            <th>医薬品名</th>
+            <th>用法</th>
+            <th>チャット</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedFilteredDrugs.map((drug, index) => (
+            <tr key={index}>
+              <td>{drug.Category}</td>
+              <td>{drug.Name}</td>
+              <td>{drug.Dose}</td>
+                <Link to={`/drug/${drug.id}`}>詳細ページ</Link>
+                <div className='message-input'>
+                <input
+                  type="text"
+                  value={chatData[drug.Name]?.message || ''}
+                  onChange={(e) => handleChatMessageChange(e, drug.Name)}
+                  placeholder="メッセージ"
+                  style={{ width: "300px", height: "50px" }}
+                />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p>投稿はありません。</p>
-          )}
-          <input
-            type="text"
-            value={chatData[drug.Name]?.message || ''}
-            onChange={(e) => handleChatMessageChange(e, drug.Name)}
-            placeholder="メッセージ"
-          />
-          <input
-            type="text"
-            value={chatData[drug.Name]?.username || ''}
-            onChange={(e) => handleUsernameChange(e, drug.Name)}
-            placeholder="ユーザーネーム"
-          />
-          <button onClick={() => handleSendMessage(drug.Name)}>投稿</button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-<Pagination
-  totalItems={filteredDrugs.length}
-  itemsPerPage={itemsPerPage}
-  currentPage={currentPage}
-  setCurrentPage={setCurrentPage}
-/>
-<button onClick={signOut}>Sign out</button>
+                <div>
+                <button onClick={() => handleSendMessage(drug.Name)}>投稿</button>
+                </div>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Pagination
+        totalItems={filteredDrugs.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
+   <Routes>
+     <Route path="/drug/:id" element={<DrugDetail drugs={drugs} />}/>
+   </Routes>
+   </BrowserRouter> 
 
       
-    </div>
-  );
+
+    <div className="App">
+       <header className="App-header">
+         <div className="sign-out-button">
+           {user ? (
+             <button onClick={signOut}>sign out</button>
+           ) : (
+             <h3>権限がありません</h3>
+           )}
+         </div>
+       </header>
+     </div>
+   </div>
+ );
 };
 
-export default App;
+
+export default withAuthenticator(App);
