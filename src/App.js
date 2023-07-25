@@ -7,9 +7,8 @@ import axios from 'axios';
 import"@aws-amplify/ui-react/styles.css";
 import awsExports from "./aws-exports";
 import{ withAuthenticator } from "@aws-amplify/ui-react";
-import { Link } from 'react-router-dom';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import DrugDetail from "./DrugDetail.js";
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import DrugDetailPage from "./DrugDetailPage.js";
 
 
 Amplify.configure(awsExports);
@@ -50,30 +49,25 @@ const App = ({ signOut,user }) => {
     filterDrugs(selectedOption ? selectedOption.value : null);
   };
 
-  const handleSearch = () => {
-    search(searchValue);
-    console.log(typeof searchValue);
-  };
-
   const handleCancelSearch = () => {
     setSearchInputValue('');
   };
-  
+
+  const navigateToDetailPage = (drugId) => {
+    window.location.href = `/drug/${drugId}`;
+  };
+
   const search = (value) => {
     setSearchValue(value);
     const categoryValue = selectedCategory ? selectedCategory.value : null;
     filterDrugs(categoryValue, selectedDose, value);
   };
 
-  const filterDrugs = (category, dose, label) => {
+  const filterDrugs = (category, label) => {
     let filteredDrugs = drugs;
   
     if (category && !label) {
       filteredDrugs = filteredDrugs.filter((drug) => drug.Category === category);
-    }
-
-    if (dose) {
-      filteredDrugs = filteredDrugs.filter((drug) => drug.Dose === dose.label);
     }
 
     if (label && typeof label === 'string') {
@@ -82,10 +76,8 @@ const App = ({ signOut,user }) => {
       filteredDrugs = filteredDrugs.filter((drug) =>
         Object.values(drug).some((item) => {
           if (item !== undefined && item !== null && typeof item === 'string') {
-            // Convert the item to lowercase for case-insensitive search
+           
             const itemText = item.toLowerCase();
-
-            // Check if the search label is included in the item text
             return itemText.includes(searchLabel);
           }
           return false;
@@ -97,7 +89,6 @@ const App = ({ signOut,user }) => {
   
   
   const handleInputChange = (inputValue) => {
-    // 文字入力による検索を実行
     setSearchValue(inputValue);
     filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, inputValue);
   };
@@ -108,7 +99,7 @@ const App = ({ signOut,user }) => {
   };
 
   const categoryOptions = [
-    { value: null, label: 'すべて' },
+    { value: null },
     ...categories.map((category) => ({ value: category, label: category })),
   ];
 
@@ -126,7 +117,6 @@ const App = ({ signOut,user }) => {
   
     if (chatMessage && selectedDrug) {
       if (!user) {
-        // ユーザーがサインインしていない場合はエラーを表示
         alert('レビューを投稿するにはサインインが必要です。');
         return;
       }
@@ -134,7 +124,7 @@ const App = ({ signOut,user }) => {
         text: chatMessage,
         date: new Date().toLocaleString(),
         username: user.username,
-        drug_id: selectedDrug.id, // 選択した医薬品のidを取得する
+        drug_id: selectedDrug.id, 
       };
   
       try {
@@ -204,7 +194,6 @@ const App = ({ signOut,user }) => {
         const jsonData = response.data;
         const drugChatData = {};
   
-        // 特定の医薬品に関連するチャットだけをフィルタリングする
         drugs.forEach((drug) => {
           drugChatData[drug.Name] = {
             message: '',
@@ -223,10 +212,9 @@ const App = ({ signOut,user }) => {
   }, [drugs]);
   
     
-
   useEffect(() => {
-    filterDrugs(selectedCategory ? selectedCategory.value : null, selectedDose, inputLabel);
-  }, [selectedCategory, selectedDose, inputLabel]);
+    filterDrugs(selectedCategory ? selectedCategory.value : null, inputLabel);
+  }, [selectedCategory,  inputLabel]);
 
   return (
    <div className="App">
@@ -253,7 +241,7 @@ const App = ({ signOut,user }) => {
           placeholder="フリーワード検索"
         />
         {searchInputValue && ( 
-            <button onClick={handleCancelSearch} style={{ marginLeft: '5px' }}>
+            <button onClick={handleCancelSearch} >
               キャンセル
             </button>
           )}
@@ -275,7 +263,21 @@ const App = ({ signOut,user }) => {
               <td>{drug.Category}</td>
               <td>{drug.Name}</td>
               <td>{drug.Dose}</td>
-                <Link to={`/drug/${drug.id}`}>詳細ページ</Link>
+              <td>
+                {chatData[drug.Name]?.messages && chatData[drug.Name]?.messages.length > 0 ? (
+                  
+                  <div>
+                    {chatData[drug.Name].messages.map((message, i) => (
+                      <div key={i} className="message">
+                        <p>{message.text}</p>
+                        <p>(投稿日: {message.date} - {message.username})</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>投稿はありません。</p>
+                )}
+                <button onClick={() => navigateToDetailPage(drug.id)}>詳細ページ</button>
                 <div className='message-input'>
                 <input
                   type="text"
@@ -288,6 +290,7 @@ const App = ({ signOut,user }) => {
                 <div>
                 <button onClick={() => handleSendMessage(drug.Name)}>投稿</button>
                 </div>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -298,15 +301,11 @@ const App = ({ signOut,user }) => {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
-   <Routes>
-     <Route path="/drug/:id" element={<DrugDetail drugs={drugs} />}/>
-   </Routes>
-   </BrowserRouter> 
-
-      
-
+    <Routes>
+     <Route path="/drug/drug_id" element={<DrugDetailPage drugs={drugs} />}/>
+    </Routes>
+   </BrowserRouter>  
     <div className="App">
-       <header className="App-header">
          <div className="sign-out-button">
            {user ? (
              <button onClick={signOut}>sign out</button>
@@ -314,7 +313,7 @@ const App = ({ signOut,user }) => {
              <h3>権限がありません</h3>
            )}
          </div>
-       </header>
+       
      </div>
    </div>
  );
