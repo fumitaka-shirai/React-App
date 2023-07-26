@@ -77,17 +77,13 @@ button {
   border-radius: 0;
   background-image: -webkit-linear-gradient(left,#57b3e8 0%, #ab50fb  100%);
   background-image: linear-gradient(to right, #57b3e8 0%, #ab50fb  100%);
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
-}
-
- button{
   -webkit-transform: translate(0, -2px);
   transform: translate(0, -2px);
   color: #fff;
   -webkit-box-shadow: 0 8px 15px rgba(0, 0, 0, .2);
   box-shadow: 0 8px 15px rgba(0, 0, 0, .2);
 }
+
 .App {
   text-align: center;
 }
