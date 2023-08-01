@@ -7,14 +7,18 @@ import axios from 'axios';
 import"@aws-amplify/ui-react/styles.css";
 import awsExports from "./aws-exports";
 import{ withAuthenticator } from "@aws-amplify/ui-react";
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import DrugDetailPage from "./DrugDetailPage.js";
+import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
+import Review from "./Review.js";
+import { Authenticator } from "@aws-amplify/ui-react";
+import { useParams } from "react-router-dom";
 
 
 Amplify.configure(awsExports);
 
-const App = ({ signOut,user }) => {
+const App = ({ signOut}) => {
+  const user = Authenticator();
   const [drugs, setDrugs] = useState([]);
+  const [selectedDrugWithChat, setSelectedDrugWithChat] = useState(null);
   const [inputLabel, setInputLabel] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDose, setSelectedDose] = useState(null);
@@ -34,6 +38,7 @@ const App = ({ signOut,user }) => {
         const response = await axios.get('http://127.0.0.1:5000/api/drug');
         const jsonData = response.data;
         setDrugs(jsonData);
+        setFilteredDrugs(jsonData);
       } catch (error) {
         console.error(error);
       }
@@ -49,12 +54,9 @@ const App = ({ signOut,user }) => {
     filterDrugs(selectedOption ? selectedOption.value : null);
   };
 
+  
   const handleCancelSearch = () => {
     setSearchInputValue('');
-  };
-
-  const navigateToDetailPage = (drugId) => {
-    window.location.href = `/drug/${drugId}`;
   };
 
   const search = (value) => {
@@ -211,14 +213,12 @@ const App = ({ signOut,user }) => {
     fetchChatData();
   }, [drugs]);
   
-    
   useEffect(() => {
     filterDrugs(selectedCategory ? selectedCategory.value : null, inputLabel);
   }, [selectedCategory,  inputLabel]);
 
   return (
    <div className="App">
-    <BrowserRouter>
       <h1>薬品検索</h1>
       <div>
         <h4>薬効</h4>
@@ -254,43 +254,19 @@ const App = ({ signOut,user }) => {
             <th>分類</th>
             <th>医薬品名</th>
             <th>用法</th>
-            <th>チャット</th>
           </tr>
         </thead>
         <tbody>
           {paginatedFilteredDrugs.map((drug, index) => (
             <tr key={index}>
               <td>{drug.Category}</td>
-              <td>{drug.Name}</td>
-              <td>{drug.Dose}</td>
               <td>
-                {chatData[drug.Name]?.messages && chatData[drug.Name]?.messages.length > 0 ? (
-                  
-                  <div>
-                    {chatData[drug.Name].messages.map((message, i) => (
-                      <div key={i} className="message">
-                        <p>{message.text}</p>
-                        <p>(投稿日: {message.date} - {message.username})</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>投稿はありません。</p>
-                )}
-                <button onClick={() => navigateToDetailPage(drug.id)}>詳細ページ</button>
-                <div className='message-input'>
-                <input
-                  type="text"
-                  value={chatData[drug.Name]?.message || ''}
-                  onChange={(e) => handleChatMessageChange(e, drug.Name)}
-                  placeholder="メッセージ"
-                  style={{ width: "300px", height: "50px" }}
-                />
-                </div>
-                <div>
-                <button onClick={() => handleSendMessage(drug.Name)}>投稿</button>
-                </div>
+                {drug.Name}
+                
+                <Link to={`/drug/${drug.id}#review-${drug.id}-1`}>レビューへ移動</Link>
+
               </td>
+              <td>{drug.Dose}</td>
             </tr>
           ))}
         </tbody>
@@ -301,11 +277,12 @@ const App = ({ signOut,user }) => {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
-    <Routes>
-     <Route path="/drug/drug_id" element={<DrugDetailPage drugs={drugs} />}/>
-    </Routes>
-   </BrowserRouter>  
-    <div className="App">
+      <BrowserRouter>
+       <Routes>
+        <Route path="/drug/:drug_id" 
+          element={<Review drugs={drugs} selectedDrug={selectedDrugWithChat} user={user}/>} />
+        </Routes> 
+      </BrowserRouter>
          <div className="sign-out-button">
            {user ? (
              <button onClick={signOut}>sign out</button>
@@ -315,7 +292,6 @@ const App = ({ signOut,user }) => {
          </div>
        
      </div>
-   </div>
  );
 };
 
