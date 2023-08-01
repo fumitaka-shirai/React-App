@@ -9,6 +9,7 @@ import awsExports from "./aws-exports";
 import{ withAuthenticator } from "@aws-amplify/ui-react";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import Review from "./Review.js";
+import DrugDetile from "./DrugDetile.js";
 import { Authenticator } from "@aws-amplify/ui-react";
 import { useParams } from "react-router-dom";
 
@@ -148,17 +149,6 @@ const App = ({ signOut}) => {
   };
   
 
-  const handleChatMessageChange = (e, drugName) => {
-    const value = e.target.value;
-    setChatData((prevChatData) => ({
-      ...prevChatData,
-      [drugName]: {
-        ...prevChatData[drugName],
-        message: value,
-      },
-    }));
-  };
-
   const paginate = (array, currentPage, itemsPerPage) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -217,8 +207,10 @@ const App = ({ signOut}) => {
     filterDrugs(selectedCategory ? selectedCategory.value : null, inputLabel);
   }, [selectedCategory,  inputLabel]);
 
+  
   return (
    <div className="App">
+<BrowserRouter>
       <h1>薬品検索</h1>
       <div>
         <h4>薬効</h4>
@@ -262,8 +254,10 @@ const App = ({ signOut}) => {
               <td>{drug.Category}</td>
               <td>
                 {drug.Name}
+                <Link to={`/drug/${drug.id}/review`}>レビューへ移動</Link>
                 
-                <Link to={`/drug/${drug.id}#review-${drug.id}-1`}>レビューへ移動</Link>
+                <Link to={`/drug/${drug.id}/detiles`}>詳細ページ</Link>
+
 
               </td>
               <td>{drug.Dose}</td>
@@ -277,11 +271,13 @@ const App = ({ signOut}) => {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
-      <BrowserRouter>
        <Routes>
-        <Route path="/drug/:drug_id" 
-          element={<Review drugs={drugs} selectedDrug={selectedDrugWithChat} user={user}/>} />
-        </Routes> 
+          <Route
+            path="/drug/:drug_id/review"
+            element={<Review drugs={drugs} selectedDrug={selectedDrugWithChat} user={user} />}
+          />
+          <Route path="/drug/:drug_id/detiles" element={<DrugDetile  drugs={drugs} />} />
+        </Routes>
       </BrowserRouter>
          <div className="sign-out-button">
            {user ? (
